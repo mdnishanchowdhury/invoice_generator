@@ -1,8 +1,11 @@
-import React from 'react'
+import InvoiceForm from '../../components/InvoiceForm'
 
 function Home() {
   return (
-    <div>Home</div>
+    <div>
+      <InvoiceForm></InvoiceForm>
+
+    </div>
   )
 }
 
