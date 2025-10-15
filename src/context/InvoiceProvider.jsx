@@ -8,7 +8,7 @@ const today = new Date().toISOString().slice(0, 10);
 
 // input from
 const initialState = {
-    selectedTemplate: 1,
+    templateId: 1,
     title: "Invoice",
     invoiceNumber: `NO-${Date.now()}`,
     date: today,
@@ -40,14 +40,6 @@ const invoiceReducer = (state, action) => {
             const newItem = { id: Date.now(), name: "", qty: 1, unitPrice: 0 };
             return { ...state, items: [...state.items, newItem] };
 
-        // item update
-        // case "UPDATE_ITEM":
-        //     return {
-        //         ...state,
-        //         items: state.items.map((item) =>
-        //             item.id === action.id ? { ...item, [action.field]: action.value } : item
-        //         ),
-        //     };
 
         case "UPDATE_ITEM":
             return {
@@ -59,14 +51,16 @@ const invoiceReducer = (state, action) => {
                 ),
             };
 
-
         // item remove
         case "REMOVE_ITEM":
-            return { ...state, items: state.items.filter((item) => item.id !== action.id) };
+            return {
+                ...state,
+                items: state.items.filter(item => item && item.id !== action.id)
+            };
 
         // template change
         case "SET_TEMPLATE":
-            return { ...state, selectedTemplate: action.templateId };
+            return { ...state, templateId: action.templateId };
 
 
         // signature update

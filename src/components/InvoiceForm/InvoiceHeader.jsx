@@ -16,7 +16,7 @@ function InvoiceHeader({ state, dispatch }) {
                     </fieldset>
                 </div>
 
-                {/* Date */}
+                {/* date */}
                 <div>
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend block text-sm font-semibold mb-1">Date</legend>
@@ -24,7 +24,7 @@ function InvoiceHeader({ state, dispatch }) {
                     </fieldset>
                 </div>
 
-                {/* Due Date */}
+                {/* due date */}
                 <div>
                     <fieldset className="fieldset">
                         <legend className="fieldset-legend block text-sm font-semibold mb-1">Due Dater</legend>
@@ -46,4 +46,4 @@ function InvoiceHeader({ state, dispatch }) {
     )
 }
 
-export default InvoiceHeader
+export default InvoiceHeader;

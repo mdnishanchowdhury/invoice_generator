@@ -17,7 +17,7 @@ const InvoiceHeader = ({ state }) => (
 
 // from / to
 const InvoiceFromTo = ({ from, to }) => (
-  <div className="flex justify-between text-sm mt-4">
+  <div className="flex justify-between text-sm mt-4 px-3">
     <div>
       <p className="font-semibold mb-1">From</p>
       <p>{from?.name}</p>

@@ -4,7 +4,7 @@ import InvoiceHeader from './InvoiceHeader'
 import InvoiceFromTo from './InvoiceFromTo'
 import InvoiceItems from './InvoiceItems'
 
-export default function InvoiceForm() {
+function InvoiceForm() {
     const { state, derived, dispatch } = useInvoice()
     const fileRef = useRef()
 
@@ -20,24 +20,24 @@ export default function InvoiceForm() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
+            {/* header */}
             <InvoiceHeader state={state} dispatch={dispatch}></InvoiceHeader>
 
-            {/* From / To */}
+            {/* from / to */}
             <InvoiceFromTo state={state} dispatch={dispatch}></InvoiceFromTo>
 
-            {/* Items */}
+            {/* items */}
             <InvoiceItems state={state} derived={derived} dispatch={dispatch}></InvoiceItems>
 
             <div className="p-4 bg-white rounded-lg shadow-sm">
 
-                {/*  Notes */}
+                {/*  notes */}
                 <fieldset className="col-span-3">
                     <legend className="fieldset-legend block text-sm font-semibold mb-1">Notes</legend>
                     <textarea className="input w-full border rounded p-2 mb-2" rows="3" value={state.notes} onChange={e => dispatch({ type: 'SET_FIELD', field: 'notes', value: e.target.value })} />
                 </fieldset>
 
-                {/*   Signature */}
+                {/*   signature */}
                 <fieldset className="col-span-3">
                     <legend className="fieldset-legend block text-sm font-semibold mb-1">Signature</legend>
                     <div className="flex items-center gap-4">
@@ -49,3 +49,4 @@ export default function InvoiceForm() {
         </div>
     )
 }
+export default InvoiceForm;

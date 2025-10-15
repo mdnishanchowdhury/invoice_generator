@@ -10,7 +10,7 @@ function InvoiceItems({ state, derived, dispatch }) {
                     state.items.map((it) => (
                         <div key={it.id} className="grid grid-cols-12 gap-2 items-center">
 
-                            {/* Item description */}
+                            {/* item description */}
                             <fieldset className="col-span-5">
                                 <legend className="fieldset-legend block text-sm font-semibold mb-1">Item description</legend>
                                 <input
@@ -23,7 +23,7 @@ function InvoiceItems({ state, derived, dispatch }) {
                                 />
                             </fieldset>
 
-                            {/* Quantity */}
+                            {/* quantity */}
                             <fieldset className="col-span-2">
                                 <legend className="fieldset-legend block text-sm font-semibold mb-1">Quantity </legend>
                                 <input
@@ -38,7 +38,7 @@ function InvoiceItems({ state, derived, dispatch }) {
                                 />
                             </fieldset>
 
-                            {/* Price */}
+                            {/* price */}
                             <fieldset className="col-span-3">
                                 <legend className="fieldset-legend block text-sm font-semibold mb-1">Price</legend>
                                 <input
@@ -61,12 +61,12 @@ function InvoiceItems({ state, derived, dispatch }) {
 
 
                             <div className='col-span-2 flex gap-3 items-center pt-10 '>
-                                {/* Amount */}
+                                {/* amount */}
                                 <div className="text-right">
                                     {(Number(it.qty || 0) * Number(it.unitPrice || 0)).toFixed(2)}
                                 </div>
 
-                                {/* Remove button */}
+                                {/* remove button */}
                                 <button
                                     onClick={() => dispatch({ type: 'REMOVE_ITEM', id: it.id })}
                                 >
@@ -89,4 +89,4 @@ function InvoiceItems({ state, derived, dispatch }) {
     )
 }
 
-export default InvoiceItems
+export default InvoiceItems;
