@@ -10,12 +10,12 @@ const today = new Date().toISOString().slice(0, 10);
 const initialState = {
     selectedTemplate: 1,
     title: "Invoice",
-    invoiceNumber: `INV-${Date.now()}`,
+    invoiceNumber: `NO-${Date.now()}`,
     date: today,
     dueDate: "",
     from: { name: "", address: "", email: "", phone: "" },
     to: { name: "", address: "", email: "", phone: "" },
-    items: [{ id: 1, name: "", qty: 0, unitPrice: ""}],
+    items: [{ id: 1, name: "", qty: 0, unitPrice: 0 }],
     taxPercent: 0,
     notes: "Thank you for your business",
     signature: null,
@@ -41,13 +41,24 @@ const invoiceReducer = (state, action) => {
             return { ...state, items: [...state.items, newItem] };
 
         // item update
+        // case "UPDATE_ITEM":
+        //     return {
+        //         ...state,
+        //         items: state.items.map((item) =>
+        //             item.id === action.id ? { ...item, [action.field]: action.value } : item
+        //         ),
+        //     };
+
         case "UPDATE_ITEM":
             return {
                 ...state,
                 items: state.items.map((item) =>
-                    item.id === action.id ? { ...item, [action.field]: action.value } : item
+                    item.id === action.id
+                        ? { ...item, [action.field]: action.field === "unitPrice" ? Number(action.value) : action.value }
+                        : item
                 ),
             };
+
 
         // item remove
         case "REMOVE_ITEM":
@@ -55,7 +66,8 @@ const invoiceReducer = (state, action) => {
 
         // template change
         case "SET_TEMPLATE":
-            return { ...state, selectedTemplate: action.value };
+            return { ...state, selectedTemplate: action.templateId };
+
 
         // signature update
         case "SET_SIGNATURE":
