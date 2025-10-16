@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBNbBRs2-5GfvVSGeNQEm92RHrPhgwaccA",
-  authDomain: "invoicegenerator-68791.firebaseapp.com",
-  projectId: "invoicegenerator-68791",
-  storageBucket: "invoicegenerator-68791.firebasestorage.app",
-  messagingSenderId: "501174770825",
-  appId: "1:501174770825:web:76362d3e2292d770c7ba58"
+  apiKey: import.meta.env.VITE_apiKey,
+  authDomain: import.meta.env.VITE_authDomain,
+  projectId: import.meta.env.VITE_projectId,
+  storageBucket: import.meta.env.VITE_storageBucket,
+  messagingSenderId: import.meta.env.VITE_messagingSenderId,
+  appId: import.meta.env.VITE_appId,
 };
 
 // Initialize Firebase
