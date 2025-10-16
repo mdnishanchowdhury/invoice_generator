@@ -1,7 +1,31 @@
 import { FaGithub, FaGoogle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom';
+import useAuth from '../../Hook/useAuth';
+import useAxiosPublic from '../../Hook/useAxiosPublic';
+
 function SocialLogin() {
+    const { userGoogleLogin } = useAuth();
+    const axiosPublic =useAxiosPublic();
+    const navigate = useNavigate();
+
+    // google
     const handleGoogle = () => {
-        console.log()
+        userGoogleLogin()
+            .then((result) => {
+                const userInfo={
+                    email: result.user?.email,
+                    name:result.user?.displayName
+                }
+                axiosPublic.post('/users',userInfo)
+                .then((res)=>{
+                     console.log(res.data)
+                     navigate('/')
+                })
+                
+            })
+            .catch(error => {
+                console.log(error.message)
+            })
     }
     return (
         <div className='flex flex-col justify-center items-center gap-3 pb-5'>
@@ -19,4 +43,4 @@ function SocialLogin() {
     )
 }
 
-export default SocialLogin;
+export default SocialLogin
