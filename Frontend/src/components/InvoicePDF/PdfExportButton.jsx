@@ -3,6 +3,8 @@ import useInvoice from "../../Hook/useInvoice";
 import Template1PDF from "./Template1PDF";
 import Template2PDF from "./Template2PDF";
 import Template3PDF from "./Template3PDF";
+import useAxiosPublic from "../../Hook/useAxiosPublic";
+import useAuth from "../../Hook/useAuth";
 
 const pdfStyles = StyleSheet.create({
   page: { padding: 20, fontSize: 11, fontFamily: "Helvetica" },
@@ -10,6 +12,9 @@ const pdfStyles = StyleSheet.create({
 
 function PdfExportButton() {
   const { state, derived } = useInvoice();
+  const axiosPublic = useAxiosPublic();
+  const { user } = useAuth();
+
   // template select
   const renderTemplate = () => {
     switch (state.templateId) {
@@ -46,13 +51,11 @@ function PdfExportButton() {
     URL.revokeObjectURL(url);
   };
 
-  const email = "nishan@gmail.com"
 
   // handle save pdf
   const handleSave = (state, derived) => {
-    // console.log("state", state, derived, email)
-    const data = {
-      email: email,
+    const pdfData = {
+      email: user.email,
       templateId: state.templateId,
       title: state.title,
       invoiceNumber: state.invoiceNumber,
@@ -66,7 +69,13 @@ function PdfExportButton() {
       taxPercent: state.taxPercent,
       derived
     }
-    console.log("json", data)
+
+    axiosPublic.post('savePdf', pdfData)
+      .then((res) => {
+        console.log("database", res.data)
+      })
+
+
   }
 
   return (

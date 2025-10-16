@@ -1,102 +1,92 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import SocialLogin from "../../components/SocialLogin/SocialLogin";
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
+import useAuth from '../../Hook/useAuth';
+import useAxiosPublic from '../../Hook/useAxiosPublic';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
-function SignUpUI() {
-    const [showPassword, setShowPassword] = useState(false);
+function SignUp() {
+    const { createUser, updatedProfile } = useAuth();
+    const navigate = useNavigate();
+    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
+    const axiosPublic = useAxiosPublic();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const form = e.target;
-        console.log({
-            name: form.name.value,
-            email: form.email.value,
-            password: form.password.value,
-            photoURL: form.photoURL.value,
-        });
+    const onSubmit = data => {
+        createUser(data.email, data.password)
+            .then(() => {
+                const userInfo = {
+                    name: data.name,
+                    email: data.email
+                }
+                axiosPublic.post('users', userInfo)
+                    .then(res => {
+                        console.log('resss', res.data)
+                        if (res.data.insertedId) {
+                            updatedProfile(data.name, data.PhotoURl)
+                                .then(() => {
+                                    reset();
+                                    Swal.fire({
+                                        position: "top-end",
+                                        icon: "success",
+                                        title: "successfully SignUp",
+                                        showConfirmButton: false,
+                                        timer: 1500
+                                    });
+                                    navigate('/')
+                                })
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error.message)
+                    })
+            })
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center ">
-            <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 ">
-                <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
-                    Create Account
-                </h2>
+        <div className="hero bg-base-200 min-h-screen ">
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* Login Card */}
+            <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                <h2 className='text-4xl font-bold text-center'>SignUp</h2>
+                <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
+                    {/* Name */}
                     <div className="form-control">
-                        <label className="label text-gray-600 font-medium">Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Your Name"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-                            required
-                        />
+                        <label className="label">Name</label>
+                        <input name="name" {...register("name",)} type="text" className="input input-bordered w-full" placeholder="Name" />
+                        {errors.name && <span className='text-red-600'>Name is required</span>}
                     </div>
-
+                    {/* Photo URl */}
                     <div className="form-control">
-                        <label className="label text-gray-600 font-medium">Photo URL</label>
-                        <input
-                            type="text"
-                            name="photoURL"
-                            placeholder="Photo URL"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-                        />
+                        <label className="label">Photo URl</label>
+                        <input {...register("PhotoURl",)} type="text" className="input input-bordered w-full" placeholder="Photo URl" />
+                        {errors.PhotoURl && <span className='text-red-600'>Name is required</span>}
                     </div>
-
+                    {/* Email */}
                     <div className="form-control">
-                        <label className="label text-gray-600 font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-                            required
-                        />
+                        <label className="label">Email</label>
+                        <input name="email" {...register("email", { required: true })} type="email" className="input input-bordered w-full" placeholder="Email" />
+                        {errors.email && <span className='text-red-600'>Email is required</span>}
                     </div>
-
-                    <div className="form-control relative">
-                        <label className="label text-gray-600 font-medium">Password</label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Password"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none pr-10"
-                            required
-                        />
-                        <span
-                            className="absolute right-3 top-[38px] cursor-pointer text-gray-500"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                        </span>
+                    {/* password */}
+                    <div className="form-control">
+                        <label className="label">Password</label>
+                        <input type="password" {...register("password", { required: true, minLength: 6, maxLength: 20, pattern: /^^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/ })} name="password" className="input input-bordered w-full" placeholder="Password" />
+                        {errors.password?.type === 'minLength' && <span className='text-red-600'>password must be 6 characters </span>}
+                        {errors.password?.type === 'maxLength' && <span className='text-red-600'>password must be less then 20 characters </span>}
+                        {errors.password?.type === 'pattern' && <span className='text-red-600'>password must have one upper case, one lower case & one number, </span>}
                     </div>
-
-                    <div className="form-control mt-4">
-                        <button
-                            type="submit"
-                            className="btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold w-full rounded-lg transition-all duration-300"
-                        >
-                            Sign Up
-                        </button>
+                    {/* btn */}
+                    <div className="form-control">
+                        <input className="btn btn-neutral bg-[#D1A054] w-full mt-4" type="submit" value="Sign Up" />
                     </div>
                 </form>
 
-                <p className="text-center text-gray-500 mt-4">
-                    Already registered?{" "}
-                    <Link to="/login" className="text-yellow-500 font-semibold hover:underline">
-                        Go to Login
-                    </Link>
-                </p>
-
-                <div className="divider text-gray-400">OR</div>
-
+                <h2 className='font-semibold text-center mb-2 text-[#D1A054]'><span className='font-normal'>Already registered? </span> <Link to='/login'> Go to log in</Link></h2>
                 <SocialLogin></SocialLogin>
             </div>
         </div>
-    );
+    )
 }
 
-export default SignUpUI;
+export default SignUp;

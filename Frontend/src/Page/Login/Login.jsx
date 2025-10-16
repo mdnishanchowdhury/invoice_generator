@@ -1,75 +1,65 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import SocialLogin from "../../components/SocialLogin/SocialLogin";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import useAuth from '../../Hook/useAuth';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 function Login() {
-    const [showPassword, setShowPassword] = useState(false);
+    const { userSignIn } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-
-        console.log(email, password);
+        userSignIn(email, password)
+            .then(result => {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "successfully Login",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                console.log(result)
+                navigate(from, { replace: true });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: `${error.message}`,
+                    icon: "success",
+                    draggable: true
+                });
+            })
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center ">
-            <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
-                <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">Sign in</h2>
+        <div className="hero bg-base-200 min-h-screen">
+            
+                <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+                    <h2 className='text-4xl font-bold text-center'>Login</h2>
+                    <form className="card-body" onSubmit={handleSubmit}>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="form-control">
-                        <label className="label text-gray-600 font-medium">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-                            required
-                        />
-                    </div>
+                        <div className="form-control">
+                            <label className="label">Email</label>
+                            <input name="email" type="email" className="input input-bordered w-full" placeholder="Email" required />
+                        </div>
 
-                    <div className="form-control relative">
-                        <label className="label text-gray-600 font-medium">Password</label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Enter your password"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none pr-10"
-                            required
-                        />
-                        <span
-                            className="absolute right-3 top-[38px] cursor-pointer text-gray-500"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                        </span>
-                    </div>
+                        <div className="form-control">
+                            <label className="label">Password</label>
+                            <input type="password" name="password" className="input input-bordered w-full" placeholder="Password" required />
+                        </div>
 
-                    <div className="form-control mt-4">
-                        <button
-                            type="submit"
-                            className="btn bg-yellow-500 hover:bg-yellow-600 text-white font-semibold w-full rounded-lg transition-all duration-300"
-                        >
-                            Login
-                        </button>
-                    </div>
-                </form>
+                        <div className="form-control">
+                            <input className="btn btn-neutral bg-[#D1A054] w-full mt-4" type="submit" value="Login" />
+                        </div>
+                    </form>
+                    <h2 className='font-semibold text-center mb-2 text-[#D1A054]'><span className='font-normal'>New here? </span> <Link to='/signUp'>Create a New Account</Link></h2>
+                    <SocialLogin></SocialLogin>
+                </div>
 
-                <p className="text-center text-gray-500 mt-4">
-                    New here?{" "}
-                    <Link to="/signUp" className="text-yellow-500 font-semibold hover:underline">
-                        Create a New Account
-                    </Link>
-                </p>
-
-                <div className="divider text-gray-400">OR</div>
-
-                <SocialLogin></SocialLogin>
-            </div>
         </div>
     );
 }

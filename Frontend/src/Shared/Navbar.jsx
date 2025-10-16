@@ -1,6 +1,16 @@
 import { NavLink } from "react-router-dom";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
+import useAuth from "../Hook/useAuth";
 function Navbar() {
+    const { user, userLogOut } = useAuth();
+
+    const handleLogout = () => {
+        userLogOut()
+            .then(() => {
+
+            })
+    }
+
     return (
         <div>
             <div className="fixed top-0 w-full z-50 navbar shadow-sm bg-white px-6 md:px-10">
@@ -30,7 +40,7 @@ function Navbar() {
                             </li>
                             <li>
                                 <NavLink
-                                    to="/save"
+                                    to="/saveDocuments"
                                     className={({ isActive }) =>
                                         isActive ? "text-blue-500 font-semibold" : ""
                                     }
@@ -57,7 +67,7 @@ function Navbar() {
                         </li>
                         <li>
                             <NavLink
-                                to="/save"
+                                to="/saveDocuments"
                                 className={({ isActive }) =>
                                     isActive ? "text-blue-500 font-semibold" : ""
                                 }
@@ -66,8 +76,16 @@ function Navbar() {
                             </NavLink>
                         </li>
                     </ul>
-                    <NavLink to="/logIn" className="btn">Login</NavLink>
-                    <NavLink to="/signUp" className="btn">SignUp</NavLink>
+
+                    {
+                        !user ? <><NavLink to="/logIn" className="btn">Login</NavLink>
+                            <NavLink to="/signUp" className="btn">SignUp</NavLink></>
+
+                            :
+                            <>
+                                <button onClick={handleLogout} className="btn">Logout</button>
+                            </>
+                    }
                 </div>
             </div>
 
