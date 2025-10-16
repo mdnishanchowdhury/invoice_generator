@@ -11,7 +11,7 @@ function InvoiceItems({ state, derived, dispatch }) {
                         <div key={it.id} className="grid grid-cols-12 gap-2 items-center">
 
                             {/* item description */}
-                            <fieldset className="col-span-5">
+                            <fieldset className="col-span-4">
                                 <legend className="fieldset-legend block text-sm font-semibold mb-1">Item description</legend>
                                 <input
                                     className="input  w-full border rounded p-2"
@@ -60,7 +60,7 @@ function InvoiceItems({ state, derived, dispatch }) {
                             </fieldset>
 
 
-                            <div className='col-span-2 flex gap-3 items-center pt-10 '>
+                            <div className='col-span-3 flex  items-center pt-10 '>
                                 {/* amount */}
                                 <div className="text-right">
                                     {(Number(it.qty || 0) * Number(it.unitPrice || 0)).toFixed(2)}

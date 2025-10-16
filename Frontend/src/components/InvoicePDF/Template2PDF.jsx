@@ -3,17 +3,20 @@ import { View, Text, Image as PDFImage } from "@react-pdf/renderer";
 const Template2PDF = ({ state, derived }) => (
     <View
         style={{
+            backgroundColor: "#ffffff",
             padding: 20,
             fontSize: 10,
             fontFamily: "Helvetica",
-            backgroundColor: "#fff",
             lineHeight: 1.5,
+            borderWidth: 1,
+            borderColor: "#e5e7eb",
+            borderRadius: 6,
         }}
     >
         {/* header */}
         <View
             style={{
-                backgroundColor: "#10b981",
+                backgroundColor: "#00966b",
                 borderTopLeftRadius: 6,
                 borderTopRightRadius: 6,
                 paddingVertical: 12,
@@ -21,11 +24,12 @@ const Template2PDF = ({ state, derived }) => (
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",
+                marginBottom: 10,
             }}
         >
             <View>
                 <Text style={{ fontSize: 16, fontWeight: "bold", color: "white" }}>
-                    {state.title || "Invoice"}
+                    Invoice
                 </Text>
                 <Text style={{ color: "white", marginTop: 2 }}>
                     #{state.invoiceNumber}
@@ -37,28 +41,24 @@ const Template2PDF = ({ state, derived }) => (
             </View>
         </View>
 
+        {/* from / to */}
         <View
             style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                marginTop: 14,
                 marginBottom: 10,
-                paddingLeft:10,
-                paddingRight:10,
             }}
         >
-            {/* from */}
             <View style={{ width: "45%" }}>
-                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>From</Text>
+                <Text style={{ fontWeight: "bold", marginBottom: 2 }}>From:</Text>
                 <Text>{state.from?.name}</Text>
                 <Text>{state.from?.address}</Text>
                 <Text>{state.from?.email}</Text>
                 <Text>{state.from?.phone}</Text>
             </View>
 
-            {/* to */}
             <View style={{ width: "45%", textAlign: "right" }}>
-                <Text style={{ fontWeight: "bold", marginBottom: 4 }}>To</Text>
+                <Text style={{ fontWeight: "bold", marginBottom: 2 }}>To:</Text>
                 <Text>{state.to?.name}</Text>
                 <Text>{state.to?.address}</Text>
                 <Text>{state.to?.email}</Text>
@@ -66,108 +66,97 @@ const Template2PDF = ({ state, derived }) => (
             </View>
         </View>
 
-        {/* items table */}
         <View
             style={{
-                borderWidth: 1,
-                borderColor: "#e5e7eb",
-                borderRadius: 4,
-                marginBottom: 14,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: 4,
             }}
         >
-            <View
-                style={{
-                    flexDirection: "row",
-                    backgroundColor: "#f3f4f6",
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#e5e7eb",
-                    paddingVertical: 6,
-                    paddingHorizontal: 8,
-                }}
-            >
-                <Text style={{ flex: 2, fontWeight: "bold" }}>Description</Text>
-                <Text style={{ flex: 1, fontWeight: "bold" }}>Qty</Text>
-                <Text style={{ flex: 1, fontWeight: "bold" }}>Unit</Text>
-                <Text style={{ flex: 1, fontWeight: "bold", textAlign: "right" }}>
-                    Amount
-                </Text>
-            </View>
-
-            {state.items?.map((item, i) => (
-                <View
-                    key={i}
-                    style={{
-                        flexDirection: "row",
-                        paddingVertical: 6,
-                        paddingHorizontal: 8,
-                        borderBottomWidth: i === state.items.length - 1 ? 0 : 1,
-                        borderBottomColor: "#f3f4f6",
-                    }}
-                >
-                    <Text style={{ flex: 2 }}>{item.name}</Text>
-                    <Text style={{ flex: 1 }}>{item.qty}</Text>
-                    <Text style={{ flex: 1 }}>Tk.{item.unitPrice.toFixed(2)}</Text>
-                    <Text style={{ flex: 1, textAlign: "right" }}>
-                        Tk.{(item.qty * item.unitPrice).toFixed(2)}
-                    </Text>
-                </View>
-            ))}
+            <Text>
+                Qty: {derived.totalQty || 0} × Tk.{derived.subTotal?.toFixed(2) || "0.00"}
+            </Text>
+            <Text>Tk.{derived.total?.toFixed(2) || "0.00"}</Text>
         </View>
 
-        {/* total section */}
+        <View
+            style={{
+                borderBottomWidth: 1,
+                borderBottomColor: "#000",
+                marginBottom: 10,
+            }}
+        />
+
+        {/* total*/}
         <View
             style={{
                 alignSelf: "flex-end",
                 width: 180,
                 borderWidth: 1,
-                borderColor: "#e5e7eb",
+                borderColor: "#000",
                 borderRadius: 6,
                 padding: 8,
-                backgroundColor: "#f9fafb",
-                marginTop: 4,
             }}
         >
-            <Text>Price: Tk.{derived.subTotal.toFixed(2)}</Text>
-            <Text>Tax ({state.taxPercent}%): Tk.{derived.taxAmount.toFixed(2)}</Text>
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 2,
+                }}
+            >
+                <Text>Subtotal</Text>
+                <Text>Tk.{derived.subTotal.toFixed(2)}</Text>
+            </View>
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginBottom: 2,
+                }}
+            >
+                <Text>Tax ({state.taxPercent}%)</Text>
+                <Text>Tk.{derived.taxAmount.toFixed(2)}</Text>
+            </View>
             <View
                 style={{
                     borderTopWidth: 1,
-                    borderTopColor: "#d1d5db",
+                    borderTopColor: "#000",
                     marginTop: 4,
                     paddingTop: 4,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                 }}
             >
+                <Text style={{ fontWeight: "bold", fontSize: 12 }}>Total</Text>
                 <Text style={{ fontWeight: "bold", fontSize: 12 }}>
-                    Total Price: Tk.{derived.total.toFixed(2)}
+                    Tk.{derived.total.toFixed(2)}
                 </Text>
             </View>
         </View>
 
-        {/* signature image */}
-        <View style={{ marginTop: 24 }}>
+        <View style={{ marginTop: 20 }}>
             <Text>Thank you for your business</Text>
-            {
-                state.signature && (
-                    <View
+
+            {state.signature && (
+                <View
+                    style={{
+                        width: 100,
+                        height: 40,
+                        marginTop: 8,
+                        overflow: "hidden",
+                    }}
+                >
+                    <PDFImage
+                        src={state.signature}
                         style={{
-                            width: 120,
-                            height: 50,
-                            marginTop: 8,
-                            overflow: "hidden",
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
                         }}
-                    >
-                        <PDFImage
-                            src={state.signature}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                padding: 5,
-                            }}
-                        />
-                    </View>
-                )
-            }
+                    />
+                </View>
+            )}
         </View>
     </View>
 );

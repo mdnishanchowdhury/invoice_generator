@@ -1,19 +1,48 @@
 import useAxiosPublic from '../../Hook/useAxiosPublic';
 import useSavePdf from '../../Hook/useSavePdf';
-
+import Swal from "sweetalert2";
 function SaveDocuments() {
     const [savePdf, refetch] = useSavePdf();
     const axiosPublic = useAxiosPublic();
 
     if (!savePdf.length) return <p className="text-center mt-4">No invoices found</p>;
 
+    // delete 
     const handleDelete = (inv) => {
-        console.log(inv._id)
-        axiosPublic.delete(`/savePdf/${inv._id}`)
-            .then(() => {
-                refetch();
-            })
-    }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This invoice will be permanently deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axiosPublic.delete(`/savePdf/${inv._id}`)
+                    .then(() => {
+                        refetch();
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "The invoice has been deleted successfully.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false,
+                            position: "top-end",
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Delete error:", error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Failed to delete invoice.",
+                            icon: "error",
+                        });
+                    });
+            }
+        });
+    };
+
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 py-10">
@@ -35,7 +64,7 @@ function SaveDocuments() {
                             </div>
                         </div>
 
-                        {/* From / To */}
+                        {/* from / to */}
                         <div className="flex justify-between text-sm mt-4 px-2">
                             <div>
                                 <p className="font-semibold mb-1">From</p>
@@ -53,7 +82,7 @@ function SaveDocuments() {
                             </div>
                         </div>
 
-                        {/* Items Table */}
+                        {/* items table */}
                         <table className="w-full mt-4 border border-gray-300 text-sm">
                             <thead className="bg-gray-100 border-b border-gray-300">
                                 <tr>
@@ -75,7 +104,7 @@ function SaveDocuments() {
                             </tbody>
                         </table>
 
-                        {/* Total */}
+                        {/* total */}
                         <div className="flex justify-end mt-4">
                             <div className="w-64 border border-gray-300 rounded-md p-3 bg-gray-50">
                                 <div className="flex justify-between text-sm mb-1">
@@ -93,7 +122,7 @@ function SaveDocuments() {
                             </div>
                         </div>
 
-                        {/* Notes */}
+                        {/* notes */}
                         {inv.notes && <p className="mt-4 text-sm">{inv.notes}</p>}
                     </div>
                 ))}

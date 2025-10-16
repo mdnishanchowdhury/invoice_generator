@@ -5,6 +5,8 @@ import Template2PDF from "./Template2PDF";
 import Template3PDF from "./Template3PDF";
 import useAxiosPublic from "../../Hook/useAxiosPublic";
 import useAuth from "../../Hook/useAuth";
+import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
 
 const pdfStyles = StyleSheet.create({
   page: { padding: 20, fontSize: 11, fontFamily: "Helvetica" },
@@ -14,6 +16,7 @@ function PdfExportButton() {
   const { state, derived } = useInvoice();
   const axiosPublic = useAxiosPublic();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // template select
   const renderTemplate = () => {
@@ -54,6 +57,23 @@ function PdfExportButton() {
 
   // handle save pdf
   const handleSave = (state, derived) => {
+    if (!user) {
+      Swal.fire({
+        title: "Login Required",
+        text: "You must be logged in to save an invoice!",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "Login",
+        cancelButtonText: "Close",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/logIn");
+        }
+      });
+      return;
+    }
+
     const pdfData = {
       email: user.email,
       templateId: state.templateId,
@@ -68,15 +88,31 @@ function PdfExportButton() {
       signature: null,
       taxPercent: state.taxPercent,
       derived
-    }
+    };
 
     axiosPublic.post('savePdf', pdfData)
       .then((res) => {
-        console.log("database", res.data)
+        const insertedId = res.data.insertedId;
+        if (insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Your work has been saved",
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
       })
+      .catch((error) => {
+        console.error("Error saving PDF:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Failed to save PDF",
+          text: error.message,
+        });
+      });
+  };
 
-
-  }
 
   return (
     <div className="flex gap-3">
