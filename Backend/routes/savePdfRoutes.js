@@ -3,7 +3,6 @@ const { getSavePdf, addSavePdf, deleteSavePdf } = require('../controllers/savePd
 
 const router = express.Router();
 
-// router.get('/', getSavePdf);
 router.get('/user/:email',getSavePdf);
 router.post('/', addSavePdf);
 router.delete('/:id', deleteSavePdf);
