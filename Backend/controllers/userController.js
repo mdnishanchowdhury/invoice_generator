@@ -1,7 +1,7 @@
 
 const usersCollection = require('../models/userModel');
 
-// Get all users
+// get all users
 const getAllUsers = async (req, res) => {
     try {
         const users = await usersCollection.find().toArray();
@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
     }
 };
 
-//  Add user
+//  add user
 const addUser = async (req, res) => {
     try {
         const user = req.body;
