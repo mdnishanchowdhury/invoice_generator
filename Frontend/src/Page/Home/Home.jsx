@@ -8,7 +8,7 @@ function Home() {
   const invoiceRef = useRef();
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 pt-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         <div className="lg:col-span-1 space-y-4">

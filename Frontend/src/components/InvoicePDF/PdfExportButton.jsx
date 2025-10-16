@@ -10,7 +10,6 @@ const pdfStyles = StyleSheet.create({
 
 function PdfExportButton() {
   const { state, derived } = useInvoice();
-
   // template select
   const renderTemplate = () => {
     switch (state.templateId) {
@@ -23,6 +22,7 @@ function PdfExportButton() {
     }
   };
 
+  // download pdf
   const handleDownload = async () => {
     if (!state.templateId) {
       alert("Please select a template first!");
@@ -46,13 +46,45 @@ function PdfExportButton() {
     URL.revokeObjectURL(url);
   };
 
+  const email = "nishan@gmail.com"
+
+  // handle save pdf
+  const handleSave = (state, derived) => {
+    // console.log("state", state, derived, email)
+    const data = {
+      email: email,
+      templateId: state.templateId,
+      title: state.title,
+      invoiceNumber: state.invoiceNumber,
+      date: state.date,
+      dueDate: state.dueDate,
+      from: state.from,
+      to: state.to,
+      items: state.items,
+      notes: state.notes,
+      signature: null,
+      taxPercent: state.taxPercent,
+      derived
+    }
+    console.log("json", data)
+  }
+
   return (
-    <button
-      onClick={handleDownload}
-      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-    >
-      Download PDF
-    </button>
+    <div className="flex gap-3">
+      <button onClick={() => handleSave(state, derived)}
+        className="px-4 py-2 bg-blue-600 text-white rounded  hover:bg-blue-200 hover:text-black"
+      >
+        Save
+      </button>
+
+      <button
+        onClick={handleDownload}
+        className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-blue-200 hover:text-black"
+      >
+        Download PDF
+      </button>
+
+    </div>
   );
 }
 export default PdfExportButton;
