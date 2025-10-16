@@ -7,6 +7,7 @@ import useAxiosPublic from "../../Hook/useAxiosPublic";
 import useAuth from "../../Hook/useAuth";
 import Swal from 'sweetalert2';
 import { useNavigate } from "react-router-dom";
+import SendEmail from "./SendEmail";
 
 const pdfStyles = StyleSheet.create({
   page: { padding: 20, fontSize: 11, fontFamily: "Helvetica" },
@@ -18,7 +19,6 @@ function PdfExportButton() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // template select
   const renderTemplate = () => {
     switch (state.templateId) {
       case 2:
@@ -30,21 +30,24 @@ function PdfExportButton() {
     }
   };
 
-  // download pdf
-  const handleDownload = async () => {
+  const generatePdfBlob = async () => {
     if (!state.templateId) {
-      alert("Please select a template first!");
-      return;
+      Swal.fire("Please select a template first!");
+      return null;
     }
-
     const doc = (
       <Document>
         <Page style={pdfStyles.page}>{renderTemplate()}</Page>
       </Document>
     );
-
     const asPdf = pdf(doc);
     const blob = await asPdf.toBlob();
+    return blob;
+  };
+
+  const handleDownload = async () => {
+    const blob = await generatePdfBlob();
+    if (!blob) return;
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -54,9 +57,7 @@ function PdfExportButton() {
     URL.revokeObjectURL(url);
   };
 
-
-  // handle save pdf
-  const handleSave = (state, derived) => {
+  const handleSave = async () => {
     if (!user) {
       Swal.fire({
         title: "Login Required",
@@ -67,9 +68,7 @@ function PdfExportButton() {
         cancelButtonText: "Close",
         reverseButtons: true,
       }).then((result) => {
-        if (result.isConfirmed) {
-          navigate("/logIn");
-        }
+        if (result.isConfirmed) navigate("/logIn");
       });
       return;
     }
@@ -87,37 +86,41 @@ function PdfExportButton() {
       notes: state.notes,
       signature: null,
       taxPercent: state.taxPercent,
-      derived
+      derived,
     };
 
-    axiosPublic.post('savePdf', pdfData)
-      .then((res) => {
-        const insertedId = res.data.insertedId;
-        if (insertedId) {
-          Swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Your work has been saved",
-            showConfirmButton: false,
-            timer: 1500
-          });
-        }
-      })
-      .catch((error) => {
-        console.error("Error saving PDF:", error);
+    try {
+      const res = await axiosPublic.post("savePdf", pdfData);
+      if (res.data.insertedId) {
         Swal.fire({
-          icon: "error",
-          title: "Failed to save PDF",
-          text: error.message,
+          position: "top-end",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
         });
+      }
+    } catch (error) {
+      console.error("Error saving PDF:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to save PDF",
+        text: error.message,
       });
+    }
   };
+
 
 
   return (
     <div className="flex gap-3">
-      <button onClick={() => handleSave(state, derived)}
-        className="px-4 py-2 bg-blue-600 text-white rounded  hover:bg-blue-200 hover:text-black"
+
+      {/* email send */}
+      <SendEmail></SendEmail>
+      
+      <button
+        onClick={handleSave}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-200 hover:text-black"
       >
         Save
       </button>
@@ -128,8 +131,8 @@ function PdfExportButton() {
       >
         Download PDF
       </button>
-
     </div>
   );
 }
+
 export default PdfExportButton;
