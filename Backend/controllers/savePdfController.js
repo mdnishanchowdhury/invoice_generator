@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const savePdfCollectionn = require('../models/savePdfModel');
 
-// Get all SavePdf
+// Get all savePdf
 const getSavePdf = async (req, res) => {
   try {
     const { email } = req.params;
