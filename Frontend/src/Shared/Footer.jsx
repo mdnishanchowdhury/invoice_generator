@@ -1,43 +1,62 @@
 function Footer() {
     return (
-        <div>
-            <footer className="footer sm:footer-horizontal bg-base-200 text-base-content md:pl-40 p-10">
-                <nav>
-                    <h6 className="footer-title">Services</h6>
-                    <a className="link link-hover">Branding</a>
-                    <a className="link link-hover">Design</a>
-                    <a className="link link-hover">Marketing</a>
-                    <a className="link link-hover">Advertisement</a>
-                </nav>
-                <nav>
-                    <h6 className="footer-title">Company</h6>
-                    <a className="link link-hover">About us</a>
-                    <a className="link link-hover">Contact</a>
-                    <a className="link link-hover">Jobs</a>
-                    <a className="link link-hover">Press kit</a>
-                </nav>
-                <nav>
-                    <h6 className="footer-title">Legal</h6>
-                    <a className="link link-hover">Terms of use</a>
-                    <a className="link link-hover">Privacy policy</a>
-                    <a className="link link-hover">Cookie policy</a>
-                </nav>
-                <form>
-                    <h6 className="footer-title">Newsletter</h6>
-                    <fieldset className="w-80">
-                        <label>Enter your email address</label>
-                        <div className="join">
+        <footer className="bg-base-300 text-base-content p-6 md:p-10">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* services */}
+                <div>
+                    <h6 className="font-semibold mb-2">Services</h6>
+                    <ul className="space-y-1">
+                        <li className="link link-hover">Branding</li>
+                        <li className="link link-hover">Design</li>
+                        <li className="link link-hover">Marketing</li>
+                        <li className="link link-hover">Advertisement</li>
+                    </ul>
+                </div>
+
+                {/* company */}
+                <div>
+                    <h6 className="font-semibold mb-2">Company</h6>
+                    <ul className="space-y-1">
+                        <li className="link link-hover">About us</li>
+                        <li className="link link-hover">Contact</li>
+                        <li className="link link-hover">Jobs</li>
+                        <li className="link link-hover">Press kit</li>
+                    </ul>
+                </div>
+
+                {/* legal */}
+                <div>
+                    <h6 className="font-semibold mb-2">Legal</h6>
+                    <ul className="space-y-1">
+                        <li className="link link-hover">Terms of use</li>
+                        <li className="link link-hover">Privacy policy</li>
+                        <li className="link link-hover">Cookie policy</li>
+                    </ul>
+                </div>
+
+                {/* newsletter */}
+                <div>
+                    <h6 className="font-semibold mb-2">Newsletter</h6>
+                    <form>
+                        <label className="block mb-2 text-sm">Enter your email</label>
+                        <div className="flex">
                             <input
-                                type="text"
+                                type="email"
                                 placeholder="username@site.com"
-                                className="input input-bordered join-item" />
-                            <button className="btn btn-primary join-item">Subscribe</button>
+                                className="input input-bordered flex-1 rounded-r-none"
+                            />
+                            <button className="btn btn-primary rounded-l-none ml-1">Subscribe</button>
                         </div>
-                    </fieldset>
-                </form>
-            </footer>
-        </div>
-    )
+                    </form>
+                </div>
+            </div>
+
+            {/* footer bottom */}
+            <div className="mt-6 text-center text-sm text-gray-600">
+                &copy; {new Date().getFullYear()} Your Company. All rights reserved.
+            </div>
+        </footer>
+    );
 }
 
-export default Footer
+export default Footer;

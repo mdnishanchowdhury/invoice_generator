@@ -1,10 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AiOutlineMenuUnfold } from "react-icons/ai";
 import useAuth from "../Hook/useAuth";
 import Swal from 'sweetalert2';
 
 function Navbar() {
     const { user, userLogOut } = useAuth();
+    const navigate =useNavigate();
 
     const handleLogout = () => {
         Swal.fire({
@@ -18,6 +19,7 @@ function Navbar() {
         }).then((result) => {
             if (result.isConfirmed) {
                 userLogOut()
+                navigate('/login')
                     .then(() => {
                         Swal.fire({
                             position: "top-end",
@@ -45,7 +47,7 @@ function Navbar() {
                 <NavLink
                     to="/"
                     className={({ isActive }) =>
-                        isActive ? "text-blue-500 font-semibold" : ""
+                        isActive ? "text-blue-500 font-semibold text-[15px]" : ""
                     }
                 >
                     Home
@@ -66,12 +68,12 @@ function Navbar() {
             {!user ? (
                 <>
                     <li>
-                        <NavLink to="/logIn" className="btn btn-sm">
+                        <NavLink to="/logIn" className="btn btn-sm text-[15px]">
                             Login
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/signUp" className="btn btn-sm">
+                        <NavLink to="/signUp" className="btn btn-sm text-[15px]">
                             SignUp
                         </NavLink>
                     </li>
@@ -103,7 +105,7 @@ function Navbar() {
                         </div>
                         <ul
                             tabIndex="-1"
-                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-2 p-2 shadow w-48 text-center"
+                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-2 p-2 shadow w-80 text-center gap-3 "
                         >
                             {menuItems}
                         </ul>

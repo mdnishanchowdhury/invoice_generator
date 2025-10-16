@@ -15,7 +15,7 @@ function SendEmail() {
         }
 
         if (!user) {
-            Swal.fire({
+            const result = await Swal.fire({
                 title: "Login Required",
                 text: "You must be logged in to send an invoice!",
                 icon: "info",
@@ -23,34 +23,39 @@ function SendEmail() {
                 confirmButtonText: "Login",
                 cancelButtonText: "Close",
                 reverseButtons: true,
-            }).then((result) => {
-                if (result.isConfirmed) navigate("/logIn");
             });
+            if (result.isConfirmed) navigate("/logIn");
             return;
         }
 
-        // from & to email
-        const fromEmail = state.from.email || user.email; 
-        if (!toEmail) {
-            Swal.fire("Please enter recipient's email in the To field!");
+        // user input for recipient
+        const result = await Swal.fire({
+            title: "Recipient Email",
+            input: "email",
+            inputLabel: "Enter recipient's email",
+            inputPlaceholder: "example@example.com",
+            showCancelButton: true,
+        });
+
+        if (!result.value) {
+            Swal.fire("Email not entered. Invoice not sent!");
             return;
         }
 
-        // table text
+        const toEmail = result.value;
+
+        // prepare invoice text
         let invoiceText = `Hello,\n\nHere is your invoice:\n\n`;
         invoiceText += `Invoice Title: ${state.title}\nInvoice Number: ${state.invoiceNumber}\nDate: ${state.date}\nDue Date: ${state.dueDate}\n\n`;
-
-        invoiceText += `From:\n${fromEmail}\n\n`;
-        invoiceText += `To:\n${toEmail}\n\n`;
-
+        invoiceText += `From:\n${state.from.email}\n\n`;
+        invoiceText += `To:\n${state.to.email}\n\n`;
         invoiceText += `Items:\nDescription | Qty | Unit Price | Amount\n`;
         state.items?.forEach(item => {
             invoiceText += `${item.name} | ${item.qty} | ${item.unitPrice} | ${item.qty * item.unitPrice}\n`;
         });
-
         invoiceText += `\nSubtotal: ${derived.subTotal}\nTax (${state.taxPercent || 0}%): ${derived.taxAmount}\nTotal: ${derived.total}\n`;
 
-        // gmail compose link
+        // gmail link
         const subject = encodeURIComponent(`Invoice: ${state.invoiceNumber}`);
         const body = encodeURIComponent(invoiceText);
         const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${toEmail}&su=${subject}&body=${body}`;

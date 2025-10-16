@@ -2,91 +2,113 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import useAuth from '../../Hook/useAuth';
-import useAxiosPublic from '../../Hook/useAxiosPublic';
 import SocialLogin from '../../components/SocialLogin/SocialLogin';
+import { useState } from 'react';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 function SignUp() {
     const { createUser, updatedProfile } = useAuth();
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
-    const axiosPublic = useAxiosPublic();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const [showPassword, setShowPassword] = useState(false);
 
-    const onSubmit = data => {
-        createUser(data.email, data.password)
-            .then(() => {
-                const userInfo = {
-                    name: data.name,
-                    email: data.email
-                }
-                axiosPublic.post('users', userInfo)
-                    .then(res => {
-                        console.log('resss', res.data)
-                        if (res.data.insertedId) {
-                            updatedProfile(data.name, data.PhotoURl)
-                                .then(() => {
-                                    reset();
-                                    Swal.fire({
-                                        position: "top-end",
-                                        icon: "success",
-                                        title: "successfully SignUp",
-                                        showConfirmButton: false,
-                                        timer: 1500
-                                    });
-                                    navigate('/')
-                                })
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error.message)
-                    })
-            })
+    const onSubmit = async (data) => {
+        try {
+            await createUser(data.email, data.password);
+            await updatedProfile(data.name);
+            reset();
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Successfully Signed Up",
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            navigate('/login');
+        } catch (error) {
+            console.error(error.message);
+            Swal.fire({
+                icon: "error",
+                title: "Sign Up Failed",
+                text: error.message
+            });
+        }
     };
 
     return (
         <div className="hero bg-base-200 min-h-screen ">
-
-
-            {/* Login Card */}
-            <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                <h2 className='text-4xl font-bold text-center'>SignUp</h2>
+            <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl py-5">
+                <h2 className='text-4xl font-bold text-center'>Sign Up</h2>
                 <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-                    {/* Name */}
+                    {/* name */}
                     <div className="form-control">
                         <label className="label">Name</label>
-                        <input name="name" {...register("name",)} type="text" className="input input-bordered w-full" placeholder="Name" />
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            className="input input-bordered w-full"
+                            {...register("name", { required: true })}
+                        />
                         {errors.name && <span className='text-red-600'>Name is required</span>}
                     </div>
-                    {/* Photo URl */}
-                    <div className="form-control">
-                        <label className="label">Photo URl</label>
-                        <input {...register("PhotoURl",)} type="text" className="input input-bordered w-full" placeholder="Photo URl" />
-                        {errors.PhotoURl && <span className='text-red-600'>Name is required</span>}
-                    </div>
-                    {/* Email */}
+
+                    {/* email */}
                     <div className="form-control">
                         <label className="label">Email</label>
-                        <input name="email" {...register("email", { required: true })} type="email" className="input input-bordered w-full" placeholder="Email" />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            className="input input-bordered w-full"
+                            {...register("email", { required: true })}
+                        />
                         {errors.email && <span className='text-red-600'>Email is required</span>}
                     </div>
+
                     {/* password */}
-                    <div className="form-control">
+                    <div className="form-control relative">
                         <label className="label">Password</label>
-                        <input type="password" {...register("password", { required: true, minLength: 6, maxLength: 20, pattern: /^^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/ })} name="password" className="input input-bordered w-full" placeholder="Password" />
-                        {errors.password?.type === 'minLength' && <span className='text-red-600'>password must be 6 characters </span>}
-                        {errors.password?.type === 'maxLength' && <span className='text-red-600'>password must be less then 20 characters </span>}
-                        {errors.password?.type === 'pattern' && <span className='text-red-600'>password must have one upper case, one lower case & one number, </span>}
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            className="input input-bordered w-full"
+                            {...register("password", {
+                                required: true,
+                                minLength: 6,
+                                maxLength: 20,
+                                pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,}$/
+                            })}
+                        />
+                        <span
+                            className="absolute right-3 top-8 cursor-pointer text-xl"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+                        </span>
+                        {errors.password?.type === 'minLength' && <span className='text-red-600'>Password must be at least 6 characters</span>}
+                        {errors.password?.type === 'maxLength' && <span className='text-red-600'>Password must be less than 20 characters</span>}
+                        {errors.password?.type === 'pattern' && <span className='text-red-600'>Password must have one uppercase, one lowercase & one number</span>}
                     </div>
-                    {/* btn */}
+
+                    {/* submit button */}
                     <div className="form-control">
-                        <input className="btn btn-neutral bg-[#D1A054] w-full mt-4" type="submit" value="Sign Up" />
+                        <input
+                            type="submit"
+                            value="Sign Up"
+                            className="btn btn-neutral bg-indigo-600 hover:bg-white hover:text-black w-full mt-4"
+                        />
                     </div>
                 </form>
 
-                <h2 className='font-semibold text-center mb-2 text-[#D1A054]'><span className='font-normal'>Already registered? </span> <Link to='/login'> Go to log in</Link></h2>
-                <SocialLogin></SocialLogin>
+                <h2 className='font-semibold text-center mb-2 text-[#D1A054]'>
+                    <span className='font-normal'>Already registered? </span>
+                    <Link to='/login'>Go to log in</Link>
+                </h2>
+
+                <SocialLogin />
             </div>
         </div>
-    )
+    );
 }
 
 export default SignUp;

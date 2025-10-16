@@ -78,7 +78,6 @@ const InvoiceNotes = ({ notes, signature }) => (
     {signature && (
       <img src={signature} alt="signature" className="h-10 mt-3" />
     )}
-    <p className="mt-6 text-gray-700">Thank you for your business</p>
   </div>
 );
 
